@@ -4,8 +4,8 @@ import Header from "../components/header";
 const Home: NextPage = () => {
   return (
     <div className="w-full max-w-xl mx-auto">
-      <Header></Header>
-      <div className="mt-20 w-full flex flex-col items-center">
+      <Header />
+      <div className="my-20 w-full flex flex-col items-center">
         <button className="w-11/12 bg-blue-600 flex justify-center text-white font-medium text-lg rounded shadow-md items-center p-3">
           <svg
             className="w-6 h-6"
