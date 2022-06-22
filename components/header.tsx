@@ -1,13 +1,16 @@
+import { useRouter } from "next/router";
+
 interface HeaderProps {
   isGoBack?: boolean;
   title?: string;
 }
 
 export default function Header({ title, isGoBack }: HeaderProps) {
+  const router = useRouter();
   return (
     <div className="bg-sky-400 w-full h-12 max-w-xl text-lg px-3 font-medium fixed text-white border-b top-0 flex justify-between items-center">
       {isGoBack ? (
-        <div>
+        <button onClick={() => router.back()}>
           <svg
             className="w-6 h-6"
             fill="currentColor"
@@ -20,7 +23,7 @@ export default function Header({ title, isGoBack }: HeaderProps) {
               clipRule="evenodd"
             />
           </svg>
-        </div>
+        </button>
       ) : (
         ""
       )}

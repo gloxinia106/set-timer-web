@@ -1,6 +1,5 @@
 import { NextPage } from "next";
 import Header from "../components/header";
-import { SelectSet, SelectTimer } from "../components/timer";
 
 const Start: NextPage = () => {
   return (
