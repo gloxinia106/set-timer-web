@@ -26,11 +26,11 @@ const WriteHome: NextPage = () => {
     const temp = {
       title,
       subTitle: "",
-      exrNumber,
       exrMin,
       exrSec,
       breakMin,
       breakSec,
+      isExercise,
     };
     get("exercise")
       .then((value: ExerciseObj[][]) => {
