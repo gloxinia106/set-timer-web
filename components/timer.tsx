@@ -13,7 +13,6 @@ interface SelectTimerProps {
   setSec?: Dispatch<SetStateAction<string>>;
   parIndex?: number;
   childIndex?: number;
-  isExr?: boolean;
 }
 
 export const SelectTimer = ({
@@ -23,7 +22,6 @@ export const SelectTimer = ({
   setSec,
   parIndex,
   childIndex,
-  isExr,
 }: SelectTimerProps) => {
   return (
     <div className="mt-2 bg-white rounded-lg border border-gray-400">
@@ -31,19 +29,11 @@ export const SelectTimer = ({
         <select
           defaultValue={min ? min : 1}
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-            console.log(parIndex, childIndex, isExr);
             if (setMin) {
               setMin(e.target.value);
-            } else if (
-              parIndex !== undefined &&
-              childIndex !== undefined &&
-              isExr !== undefined
-            ) {
+            } else if (parIndex !== undefined && childIndex !== undefined) {
               get("exercise").then((value: ExerciseObj[][]) => {
-                isExr
-                  ? (value[parIndex][childIndex]["exrMin"] = e.target.value)
-                  : (value[parIndex][childIndex]["breakMin"] = e.target.value);
-                console.log("min" + value);
+                value[parIndex][childIndex]["breakMin"] = e.target.value;
                 set("exercise", value);
               });
             }
@@ -63,15 +53,9 @@ export const SelectTimer = ({
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
             if (setSec) {
               setSec(e.target.value);
-            } else if (
-              parIndex !== undefined &&
-              childIndex !== undefined &&
-              isExr !== undefined
-            ) {
+            } else if (parIndex !== undefined && childIndex !== undefined) {
               get("exercise").then((value: ExerciseObj[][]) => {
-                isExr
-                  ? (value[parIndex][childIndex]["exrSec"] = e.target.value)
-                  : (value[parIndex][childIndex]["breakSec"] = e.target.value);
+                value[parIndex][childIndex]["breakSec"] = e.target.value;
                 set("exercise", value);
               });
             }

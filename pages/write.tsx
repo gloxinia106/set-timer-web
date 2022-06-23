@@ -9,12 +9,9 @@ import { ExerciseObj } from "../interface";
 const WriteHome: NextPage = () => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isExercise, setIsExercise] = useState<boolean>(false);
 
   const [title, setTitle] = useState<string>("");
   const [exrNumber, setExrNumber] = useState<string>("1");
-  const [exrMin, setExrMin] = useState<string>("0");
-  const [exrSec, setExrSec] = useState<string>("0");
   const [breakMin, setBreakMin] = useState<string>("0");
   const [breakSec, setBreakSec] = useState<string>("0");
 
@@ -26,11 +23,8 @@ const WriteHome: NextPage = () => {
     const temp = {
       title,
       subTitle: "",
-      exrMin,
-      exrSec,
       breakMin,
       breakSec,
-      isExercise,
     };
     get("exercise")
       .then((value: ExerciseObj[][]) => {
@@ -75,28 +69,6 @@ const WriteHome: NextPage = () => {
           <span className="font-semibold mb-3">휴식시간</span>
           <SelectTimer setMin={setBreakMin} setSec={setBreakSec} />
         </div>
-        <div className="flex justify-between items-center py-6">
-          <span className="font-semibold">운동시간</span>
-          <label
-            htmlFor="default-toggle"
-            className="inline-flex relative items-center cursor-pointer"
-          >
-            <input
-              onChange={() => {
-                setIsExercise(!isExercise);
-              }}
-              type="checkbox"
-              id="default-toggle"
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-        {isExercise ? (
-          <SelectTimer setMin={setExrMin} setSec={setExrSec} />
-        ) : (
-          ""
-        )}
       </div>
       <button
         onClick={handleBtn}
