@@ -1,17 +1,17 @@
 import { MouseEvent } from "react";
 
 interface DeleteBtnProps {
-  index: number;
+  id: number;
   handelBtn: (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    index: number
+    id: number
   ) => void;
 }
 
-export const DeleteBtn = ({ index, handelBtn }: DeleteBtnProps) => {
+export const DeleteBtn = ({ id, handelBtn }: DeleteBtnProps) => {
   return (
     <button
-      onClick={(e) => handelBtn(e, index)}
+      onClick={(e) => handelBtn(e, id)}
       className="bg-red-500 text-white rounded-full flex justify-center items-center w-12 aspect-square"
     >
       <svg

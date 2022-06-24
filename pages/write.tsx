@@ -1,4 +1,4 @@
-import { get, set } from "idb-keyval";
+import { keys, set } from "idb-keyval";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ChangeEvent, useRef, useState } from "react";
@@ -20,26 +20,18 @@ const WriteHome: NextPage = () => {
       inputRef.current?.focus();
       return;
     }
-    const temp = {
-      title,
-      subTitle: "",
-      breakMin,
-      breakSec,
-    };
-    get("exercise")
-      .then((value: ExerciseObj[][]) => {
-        const exerArray = [...Array(+exrNumber).keys()].map((_) => {
-          return temp;
-        });
-        if (value) {
-          value.push(exerArray);
-          set("exercise", value);
-        } else {
-          set("exercise", [exerArray]);
-        }
-        console.log(temp);
+    keys()
+      .then((values: IDBValidKey[]) => {
+        let newValue = [...Array(+exrNumber).keys()].map((_, index) => ({
+          id: index,
+          title,
+          subTitle: "",
+          breakMin,
+          breakSec,
+        }));
+        set(values.length, { id: values.length, values: newValue });
       })
-      .then(() => {
+      .finally(() => {
         router.push("/");
       });
   };

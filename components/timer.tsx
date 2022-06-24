@@ -11,31 +11,17 @@ interface SelectTimerProps {
   setMin?: Dispatch<SetStateAction<string>>;
   sec?: string;
   setSec?: Dispatch<SetStateAction<string>>;
-  parIndex?: number;
-  childIndex?: number;
 }
 
-export const SelectTimer = ({
-  min,
-  sec,
-  setMin,
-  setSec,
-  parIndex,
-  childIndex,
-}: SelectTimerProps) => {
+export const SelectTimer = ({ min, sec, setMin, setSec }: SelectTimerProps) => {
   return (
     <div className="mt-2 bg-white rounded-lg border border-gray-400">
       <div className="flex items-center justify-center">
         <select
-          defaultValue={min ? min : 1}
+          defaultValue={min ? min : 0}
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
             if (setMin) {
               setMin(e.target.value);
-            } else if (parIndex !== undefined && childIndex !== undefined) {
-              get("exercise").then((value: ExerciseObj[][]) => {
-                value[parIndex][childIndex]["breakMin"] = e.target.value;
-                set("exercise", value);
-              });
             }
           }}
           name="min"
@@ -49,15 +35,10 @@ export const SelectTimer = ({
         </select>
         <span className="text-xl mr-3">:</span>
         <select
-          defaultValue={sec ? sec : 1}
+          defaultValue={sec ? sec : 0}
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
             if (setSec) {
               setSec(e.target.value);
-            } else if (parIndex !== undefined && childIndex !== undefined) {
-              get("exercise").then((value: ExerciseObj[][]) => {
-                value[parIndex][childIndex]["breakSec"] = e.target.value;
-                set("exercise", value);
-              });
             }
           }}
           name="sec"

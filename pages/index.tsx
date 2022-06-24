@@ -1,27 +1,29 @@
-import { get, set } from "idb-keyval";
+import { del, get, set, values } from "idb-keyval";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { MouseEvent, useEffect, useState } from "react";
 import { DeleteBtn } from "../components/btn";
 import Header from "../components/header";
-import { ExerciseObj } from "../interface";
+import { HomeExercisObj } from "../interface";
 
 const Home: NextPage = () => {
-  const [exrArray, setExrArray] = useState<ExerciseObj[][] | []>();
+  const [exrArray, setExrArray] = useState<HomeExercisObj[]>();
   useEffect(() => {
-    get("exercise").then((value) => setExrArray(value));
+    values().then((value) => setExrArray(value));
   }, [exrArray]);
 
   const router = useRouter();
 
   const handelBtn = (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    paramIndex: number
+    id: number
   ) => {
     e.stopPropagation();
-    const tempArray = exrArray?.filter((_, index) => index !== paramIndex);
-    setExrArray(tempArray);
-    set("exercise", tempArray);
+    const tempArray = exrArray?.filter((_, index) => index !== +id);
+    // console.log(tempArray);
+    // setExrArray(tempArray);
+    console.log(id);
+    del(id);
   };
 
   return (
@@ -59,18 +61,18 @@ const Home: NextPage = () => {
                   className="mt-5 cursor-pointer shadow-lg rounded w-10/12 flex justify-between px-3 py-5"
                 >
                   <div className="flex flex-col items-center">
-                    <span className="font-semibold">{value[0]["title"]}</span>
-                    <span className="text-sm">{value.length}세트</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span>
-                      휴식시간 {value[0]["breakMin"]}분 {value[0]["breakSec"]}초
+                    <span className="font-semibold">
+                      {value.values[0].title}
                     </span>
+                    <span className="text-sm">{value.values.length}세트</span>
+                  </div>
+                  <div className="flex flex-col items-center justify-center">
                     <span>
-                      운동시간 {value[0]["exrMin"]}분 {value[0]["exrSec"]}초
+                      휴식시간 {value.values[0].breakMin}분{" "}
+                      {value.values[0].breakSec}초
                     </span>
                   </div>
-                  <DeleteBtn handelBtn={handelBtn} index={index} />
+                  <DeleteBtn handelBtn={handelBtn} id={value.id} />
                 </div>
               );
             })
