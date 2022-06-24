@@ -1,4 +1,4 @@
-import { get, set } from "idb-keyval";
+import { get, set, update } from "idb-keyval";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { ExerciseObj } from "../interface";
 
@@ -11,9 +11,18 @@ interface SelectTimerProps {
   setMin?: Dispatch<SetStateAction<string>>;
   sec?: string;
   setSec?: Dispatch<SetStateAction<string>>;
+  parentIndex: number;
+  id: number;
 }
 
-export const SelectTimer = ({ min, sec, setMin, setSec }: SelectTimerProps) => {
+export const SelectTimer = ({
+  min,
+  sec,
+  setMin,
+  setSec,
+  id,
+  parentIndex,
+}: SelectTimerProps) => {
   return (
     <div className="mt-2 bg-white rounded-lg border border-gray-400">
       <div className="flex items-center justify-center">
@@ -22,6 +31,11 @@ export const SelectTimer = ({ min, sec, setMin, setSec }: SelectTimerProps) => {
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
             if (setMin) {
               setMin(e.target.value);
+            } else {
+              update(parentIndex, (value) => {
+                value.values[id].breakMin = e.target.value;
+                return value;
+              });
             }
           }}
           name="min"
@@ -39,6 +53,11 @@ export const SelectTimer = ({ min, sec, setMin, setSec }: SelectTimerProps) => {
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
             if (setSec) {
               setSec(e.target.value);
+            } else {
+              update(parentIndex, (value) => {
+                value.values[id].breakSec = e.target.value;
+                return value;
+              });
             }
           }}
           name="sec"

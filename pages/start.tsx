@@ -3,55 +3,47 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Header from "../components/header";
-import { ExerciseObj } from "../interface";
+import { ExerciseObj, HomeExercisObj } from "../interface";
 
 const Start: NextPage = () => {
   const router = useRouter();
-  const [parentIndex, setParentIndex] = useState<string>("");
   const [detailArray, setDetailArray] = useState<ExerciseObj[] | []>();
   const [min, setMin] = useState<string>("0");
   const [sec, setSec] = useState<string>("0");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isExercise, setIsExercise] = useState<boolean>(false);
 
   useEffect(() => {
-    get("exercise").then((value) => {
-      const index = router.query["id"];
-      try {
-        if (index && typeof index === "string") {
-          setDetailArray(value[+index]);
-          setParentIndex(index);
-          if (value[+index][0]["isExercise"]) {
-            startTimer(
-              value[+index][0]["exrMin"],
-              value[+index][0]["exrSec"],
-              true
-            );
-          }
+    const id = router.query["id"];
+    if (id) {
+      get(+id).then((value: HomeExercisObj) => {
+        try {
+          setDetailArray(value.values);
+          setMin(value.values[0].breakMin);
+          setSec(value.values[0].breakSec);
+        } catch (error) {
+          router.push("/");
         }
-      } catch (error) {
-        router.push("/");
-      }
-    });
+      });
+    }
   }, [router]);
 
-  const startTimer = (
-    minutes: string,
-    seconds: string,
-  ) => {
+  const startTimer = (minutes: number, seconds: number) => {
     const countdown = setInterval(() => {
-      if (+seconds > 0) {
-        setSec(+seconds - 1 + "");
+      if (seconds >= 0) {
+        setSec(seconds - 1 + "");
       }
-      if (+seconds === 0) {
-        if (+minutes === 0) {
+      if (seconds < 0) {
+        if (minutes === 0) {
           clearInterval(countdown);
-            if (detailArray) {
-              const breakMin = detailArray[currentIndex + 1]["breakMin"];
-              const breakSec = detailArray[currentIndex + 1]["breakSec"];
-              setMin(breakMin);
-              setSec(breakSec);
+          if (detailArray) {
+            const breakMin = detailArray[currentIndex + 1]["breakMin"];
+            const breakSec = detailArray[currentIndex + 1]["breakSec"];
+            setMin(breakMin);
+            setSec(breakSec);
+          }
         } else {
-          setMin(+minutes - 1 + "");
+          setMin(minutes - 1 + "");
           setSec("59");
         }
       }
@@ -63,7 +55,7 @@ const Start: NextPage = () => {
       <Header isGoBack title={`${currentIndex + 1} 세트`} />
       <div className="pt-16 w-full h-full flex flex-col items-center">
         <div className="text-2xl font-bold">
-          {detailArray ? detailArray[+parentIndex]["subTitle"] : ""}
+          {detailArray ? detailArray[currentIndex].subTitle : ""}
         </div>
         <div className="w-full h-full flex justify-center items-center">
           {isExercise ? (
@@ -75,7 +67,7 @@ const Start: NextPage = () => {
           ) : (
             <div
               onClick={() => {
-                startTimer(min, sec, true);
+                startTimer(+min, +sec);
               }}
               className="bg-blue-500 cursor-pointer aspect-square rounded-full w-11/12 flex justify-center items-center"
             >

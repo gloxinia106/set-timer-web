@@ -1,91 +1,68 @@
-import { get, set } from "idb-keyval";
+import { get, update } from "idb-keyval";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import Header from "../components/header";
-import { SelectSet, SelectTimer } from "../components/timer";
+import { SelectTimer } from "../components/timer";
 import { DeleteBtn } from "../components/btn";
-import { ExerciseObj } from "../interface";
+import { ExerciseObj, HomeExercisObj } from "../interface";
 
 const Detail: NextPage = () => {
   const router = useRouter();
   const [parentIndex, setParentIndex] = useState<string>("");
-  const [detailArray, setDetailArray] = useState<ExerciseObj[] | []>();
+  const [detailArray, setDetailArray] = useState<ExerciseObj[]>();
   useEffect(() => {
-    get("exercise").then((value) => {
-      const index = router.query["id"];
-      try {
-        if (index && typeof index === "string") {
-          setDetailArray(value[+index]);
-          setParentIndex(index);
-        }
-      } catch (error) {
-        router.push("/");
-      }
-    });
-  }, [parentIndex, router]);
-
-  const saveidb = (tempArray: ExerciseObj[]) => {
-    get("exercise").then((values) => {
-      const newValue = values.map((value: any, index: number) => {
-        if (index === +parentIndex) {
-          return tempArray;
-        } else {
-          return value;
+    const id = router.query["id"];
+    if (id) {
+      get(+id).then((value: HomeExercisObj) => {
+        setDetailArray(value.values);
+        if (typeof id === "string") {
+          setParentIndex(id);
         }
       });
-      set("exercise", newValue);
-    });
-  };
+    }
+  }, [parentIndex, router]);
 
   const handleAddBtn = () => {
-    const initExercise = {
-      title: detailArray ? detailArray[0]["title"] : "",
-      subTitle: "",
-      exrNumber: "1",
-      exrMin: "0",
-      exrSec: "0",
-      breakMin: "0",
-      breakSec: "0",
-      isExercise: false,
-    };
-    const addedDetailArray = detailArray
-      ? [...detailArray, initExercise]
-      : [initExercise];
-    setDetailArray(addedDetailArray);
-    saveidb(addedDetailArray);
+    if (detailArray) {
+      const initExercise = {
+        id: detailArray.length,
+        title: detailArray[0].title,
+        subTitle: "",
+        breakMin: "0",
+        breakSec: "0",
+      };
+      update(+parentIndex, (value) => {
+        value.values.push(initExercise);
+        return value;
+      });
+    }
   };
 
   const handelDeleteBtn = (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    paramIndex: number
+    id: number
   ) => {
     e.stopPropagation();
-    if (detailArray && detailArray.length > 1) {
-      let deletedDetailArray;
-      deletedDetailArray = detailArray.filter(
-        (_, index) => paramIndex !== index
-      );
-      setDetailArray(deletedDetailArray);
-      deletedDetailArray ? saveidb(deletedDetailArray) : "";
-    } else {
-      alert("첫번째 항목은 삭제할 수 없습니다.");
-    }
+    update(+parentIndex, (value) => {
+      value.values.splice(id, 1);
+      return value;
+    });
   };
 
   const handleSubTitle = (
     e: ChangeEvent<HTMLInputElement>,
     paramIndex: number
   ) => {
-    get("exercise").then((value: ExerciseObj[][]) => {
-      value[+parentIndex][paramIndex]["subTitle"] = e.target.value;
-      set("exercise", value);
+    update(+parentIndex, (value) => {
+      value.values[paramIndex].subTitle = e.target.value;
+      return value;
     });
   };
 
   return (
     <div className="w-full max-w-xl mx-auto">
-      <Header isGoBack title={detailArray ? detailArray[0]["title"] : ""} />
+      <Header isGoBack title={detailArray ? detailArray[0].title : ""} />
       <div className="mt-16 mb-32 w-full flex flex-col items-center">
         <button
           onClick={handleAddBtn}
@@ -109,22 +86,22 @@ const Detail: NextPage = () => {
         </button>
         <div className="mt-12 w-full flex flex-col items-center">
           {detailArray
-            ? detailArray.map((_, index) => {
+            ? detailArray.map((value, index) => {
                 return (
                   <div
                     key={index}
                     className="mt-10 w-full px-4 py-6 shadow rounded-md"
                   >
                     <div className="flex pb-5 justify-between items-center border-b border-gray-600">
-                      <span className="font-semibold">{index + 1} 세트</span>
-                      <DeleteBtn handelBtn={handelDeleteBtn} index={index} />
+                      <span className="font-semibold">{value.id + 1} 세트</span>
+                      <DeleteBtn handelBtn={handelDeleteBtn} id={value.id} />
                     </div>
                     <div className="py-6 border-b border-gray-600">
                       <input
                         id="title"
-                        defaultValue={detailArray[index]["subTitle"]}
+                        defaultValue={value.subTitle}
                         onChange={(e) => {
-                          handleSubTitle(e, index);
+                          handleSubTitle(e, value.id);
                         }}
                         placeholder="운동 상세정보를 입력해주세요"
                         className="w-full focus:outline-none border rounded p-2"
@@ -133,10 +110,10 @@ const Detail: NextPage = () => {
                     <div className="py-6 border-b border-gray-600">
                       <span className="font-semibold mb-3">휴식시간</span>
                       <SelectTimer
-                        min={detailArray[index]["breakMin"]}
-                        sec={detailArray[index]["breakSec"]}
-                        parIndex={+parentIndex}
-                        childIndex={index}
+                        min={value.breakMin}
+                        sec={value.breakSec}
+                        id={value.id}
+                        parentIndex={+parentIndex}
                       />
                     </div>
                   </div>
@@ -145,12 +122,7 @@ const Detail: NextPage = () => {
             : ""}
         </div>
       </div>
-      <button
-        onClick={() => {
-          router.push(`/start?id=${router.query["id"]}`);
-        }}
-        className="w-full max-w-xl bottom-10 mx-auto fixed bg-blue-600 flex justify-center text-white font-medium text-lg shadow-md items-center p-3"
-      >
+      <button className="w-full max-w-xl bottom-10 mx-auto fixed bg-blue-600 flex justify-center text-white font-medium text-lg shadow-md items-center p-3">
         <div>시작하기</div>
       </button>
     </div>

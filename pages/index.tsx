@@ -1,4 +1,4 @@
-import { del, get, set, values } from "idb-keyval";
+import { del, values } from "idb-keyval";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { MouseEvent, useEffect, useState } from "react";
@@ -19,10 +19,6 @@ const Home: NextPage = () => {
     id: number
   ) => {
     e.stopPropagation();
-    const tempArray = exrArray?.filter((_, index) => index !== +id);
-    // console.log(tempArray);
-    // setExrArray(tempArray);
-    console.log(id);
     del(id);
   };
 
