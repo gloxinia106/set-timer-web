@@ -11,8 +11,8 @@ interface SelectTimerProps {
   setMin?: Dispatch<SetStateAction<string>>;
   sec?: string;
   setSec?: Dispatch<SetStateAction<string>>;
-  parentIndex: number;
-  id: number;
+  parentIndex?: number;
+  id?: number;
 }
 
 export const SelectTimer = ({
@@ -32,10 +32,12 @@ export const SelectTimer = ({
             if (setMin) {
               setMin(e.target.value);
             } else {
-              update(parentIndex, (value) => {
-                value.values[id].breakMin = e.target.value;
-                return value;
-              });
+              if (parentIndex !== undefined && id !== undefined) {
+                update(parentIndex, (value) => {
+                  value.values[id].breakMin = e.target.value;
+                  return value;
+                });
+              }
             }
           }}
           name="min"
@@ -54,10 +56,12 @@ export const SelectTimer = ({
             if (setSec) {
               setSec(e.target.value);
             } else {
-              update(parentIndex, (value) => {
-                value.values[id].breakSec = e.target.value;
-                return value;
-              });
+              if (parentIndex !== undefined && id !== undefined) {
+                update(parentIndex, (value) => {
+                  value.values[id].breakSec = e.target.value;
+                  return value;
+                });
+              }
             }
           }}
           name="sec"

@@ -36,6 +36,7 @@ const Detail: NextPage = () => {
         value.values.push(initExercise);
         return value;
       });
+      setDetailArray([...detailArray, initExercise]);
     }
   };
 
@@ -48,6 +49,8 @@ const Detail: NextPage = () => {
       value.values.splice(id, 1);
       return value;
     });
+    const newArray = detailArray?.filter((_, index) => index !== id);
+    setDetailArray(newArray);
   };
 
   const handleSubTitle = (
@@ -107,7 +110,7 @@ const Detail: NextPage = () => {
                         className="w-full focus:outline-none border rounded p-2"
                       />
                     </div>
-                    <div className="py-6 border-b border-gray-600">
+                    <div className="py-6">
                       <span className="font-semibold mb-3">휴식시간</span>
                       <SelectTimer
                         min={value.breakMin}
@@ -122,7 +125,10 @@ const Detail: NextPage = () => {
             : ""}
         </div>
       </div>
-      <button className="w-full max-w-xl bottom-10 mx-auto fixed bg-blue-600 flex justify-center text-white font-medium text-lg shadow-md items-center p-3">
+      <button
+        onClick={() => router.push(`/start?id=${parentIndex}`)}
+        className="w-full max-w-xl bottom-10 mx-auto fixed bg-blue-600 flex justify-center text-white font-medium text-lg shadow-md items-center p-3"
+      >
         <div>시작하기</div>
       </button>
     </div>

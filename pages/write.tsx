@@ -57,7 +57,7 @@ const WriteHome: NextPage = () => {
           <span className="font-semibold mb-3">세트 수</span>
           <SelectSet setExrNumber={setExrNumber} />
         </div>
-        <div className="py-6 border-b border-gray-600">
+        <div className="py-6">
           <span className="font-semibold mb-3">휴식시간</span>
           <SelectTimer setMin={setBreakMin} setSec={setBreakSec} />
         </div>

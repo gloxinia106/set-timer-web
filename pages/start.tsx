@@ -32,6 +32,7 @@ const Start: NextPage = () => {
     const countdown = setInterval(() => {
       if (seconds >= 0) {
         setSec(seconds - 1 + "");
+        seconds -= 1;
       }
       if (seconds < 0) {
         if (minutes === 0) {
@@ -41,9 +42,12 @@ const Start: NextPage = () => {
             const breakSec = detailArray[currentIndex + 1]["breakSec"];
             setMin(breakMin);
             setSec(breakSec);
+            setCurrentIndex(currentIndex + 1);
+            setIsExercise(false);
           }
         } else {
           setMin(minutes - 1 + "");
+          minutes -= 1;
           setSec("59");
         }
       }
@@ -61,13 +65,14 @@ const Start: NextPage = () => {
           {isExercise ? (
             <div className="bg-blue-500 aspect-square rounded-full w-11/12 flex justify-center items-center">
               <span className="text-white font-bold text-8xl">
-                {min}:{sec}
+                {min} : {sec}
               </span>
             </div>
           ) : (
             <div
               onClick={() => {
                 startTimer(+min, +sec);
+                setIsExercise(true);
               }}
               className="bg-blue-500 cursor-pointer aspect-square rounded-full w-11/12 flex justify-center items-center"
             >
