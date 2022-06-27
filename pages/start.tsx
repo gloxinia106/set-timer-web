@@ -31,21 +31,24 @@ const Start: NextPage = () => {
 
   const startTimer = (minutes: number, seconds: number) => {
     const countdown = setInterval(() => {
-      if (seconds >= 0) {
+      if (seconds > 0) {
         setSec(seconds - 1 + "");
         seconds -= 1;
       }
-      if (seconds < 0) {
+      if (seconds === 0) {
         if (minutes === 0) {
           clearInterval(countdown);
           if (detailArray) {
+            audio.play();
+            if (currentIndex + 1 === detailArray.length) {
+              return;
+            }
             const breakMin = detailArray[currentIndex + 1]["breakMin"];
             const breakSec = detailArray[currentIndex + 1]["breakSec"];
             setMin(breakMin);
             setSec(breakSec);
             setCurrentIndex(currentIndex + 1);
             setIsExercise(false);
-            audio.play();
           }
         } else {
           setMin(minutes - 1 + "");
