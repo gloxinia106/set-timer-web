@@ -12,7 +12,7 @@ const Start: NextPage = () => {
   const [sec, setSec] = useState<string>("0");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isExercise, setIsExercise] = useState<boolean>(false);
-  const [audio] = useState(new Audio("/whistle.mp3"));
+  const [audio, setAudio] = useState<HTMLAudioElement>();
 
   useEffect(() => {
     const id = router.query["id"];
@@ -22,6 +22,7 @@ const Start: NextPage = () => {
           setDetailArray(value.values);
           setMin(value.values[0].breakMin);
           setSec(value.values[0].breakSec);
+          setAudio(new Audio("/whistle.mp3"));
         } catch (error) {
           router.push("/");
         }
@@ -39,7 +40,7 @@ const Start: NextPage = () => {
         if (minutes === 0) {
           clearInterval(countdown);
           if (detailArray) {
-            audio.play();
+            audio?.play();
             if (currentIndex + 1 === detailArray.length) {
               return;
             }
